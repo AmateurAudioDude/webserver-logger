@@ -143,7 +143,12 @@ function delay(ms) {
 }
 
 function loadRDSLogger() {
-	
+
+
+
+
+
+
     // CSS styles for button wrapper
     const buttonWrapperStyles = `
         display: flex;
@@ -1267,7 +1272,76 @@ function loadRDSLogger() {
                 wrapperElement.appendChild(emptyLine);
             }
 
-            LoggerButton.addEventListener('click', toggleLogger);
+
+
+
+// Create Spectrum Graph button
+function createButton(buttonId) {
+    (function waitForFunction() {
+        const maxWaitTime = 10000;
+        let functionFound = false;
+
+        const observer = new MutationObserver((mutationsList, observer) => {
+            if (typeof addIconToPluginPanel === 'function') {
+                observer.disconnect();
+                addIconToPluginPanel(buttonId, "RDS Logger", "solid", "table", "RDS Logger");
+                functionFound = true;
+
+                const buttonObserver = new MutationObserver(() => {
+                    const $pluginButton = $(`#${buttonId}`);
+                    if ($pluginButton.length > 0) {
+                        $pluginButton.on('click', function() {
+                            // Code to execute on click
+                            toggleLogger();
+                        });
+                        // Additional code
+                        buttonObserver.disconnect(); // Stop observing once button is found
+                    }
+                });
+
+                buttonObserver.observe(document.body, { childList: true, subtree: true });
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        setTimeout(() => {
+            observer.disconnect();
+            if (!functionFound) {
+                console.error(`Function addIconToPluginPanel not found after ${maxWaitTime / 1000} seconds.`);
+            }
+        }, maxWaitTime);
+    })();
+
+const aSpectrumCss = `
+#${buttonId}:hover {
+    color: var(--color-5);
+    filter: brightness(120%);
+}
+`
+$("<style>")
+    .prop("type", "text/css")
+    .html(aSpectrumCss)
+    .appendTo("head");
+}
+createButton('Log-on-off');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //LoggerButton.addEventListener('click', toggleLogger);
             displaySignalCanvas();
         }
 
